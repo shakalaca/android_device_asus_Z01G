@@ -20,6 +20,9 @@ include $(call all-subdir-makefiles, $(LOCAL_PATH))
 
 include $(CLEAR_VARS)
 
+BOARD_RECOVERY_IMAGE_PREPARE := \
+  sed -i 's/ro.product.name=.*/ro.product.name=OPEN_Phone/g' $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+
 TEXFAT_MODULE := $(TARGET_RECOVERY_ROOT_OUT)/sbin/texfat.ko
 $(TEXFAT_MODULE): $(ANDROID_PRODUCT_OUT)/kernel
 	@cp $(KERNEL_MODULES_OUT)/texfat.ko $(TEXFAT_MODULE)
