@@ -1,14 +1,15 @@
 import init.recovery.qcom_decrypt.rc
 
 on init
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+
     insmod /sbin/texfat.ko
 
     start copy_fingerprint
     start qcom-usb-sh
 
 on fs
-    wait /dev/block/platform/soc/1da4000.ufshc
-    symlink /dev/block/platform/soc/1da4000.ufshc /dev/block/bootdevice
     wait /dev/block/bootdevice/by-name/factory
     mkdir /factory 0755
     mount ext4 /dev/block/bootdevice/by-name/factory /factory ro nodev nosuid
