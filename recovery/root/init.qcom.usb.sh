@@ -1,5 +1,5 @@
-#!/system/bin/sh
-# Copyright (c) 2012-2016, The Linux Foundation. All rights reserved.
+#!/vendor/bin/sh
+# Copyright (c) 2012-2017, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -129,7 +129,7 @@ echo 1  > /sys/class/android_usb/f_mass_storage/lun/nofua
 #	          "Dragon" | "SBC")
 #	              setprop persist.sys.usb.config diag,adb
 #	          ;;
-#                  *)
+#                 *)
 #		  soc_machine=${soc_machine:0:3}
 #		  case "$soc_machine" in
 #		    "SDA")
@@ -137,7 +137,7 @@ echo 1  > /sys/class/android_usb/f_mass_storage/lun/nofua
 #		    ;;
 #		    *)
 #	            case "$target" in
-#                      "msm8916")
+#                     "msm8916")
 #		          setprop persist.sys.usb.config diag,serial_smd,rmnet_bam,adb
 #		      ;;
 #	              "msm8994" | "msm8992")
@@ -162,13 +162,13 @@ echo 1  > /sys/class/android_usb/f_mass_storage/lun/nofua
 #	              "msm8952" | "msm8953")
 #		          setprop persist.sys.usb.config diag,serial_smd,rmnet_ipa,adb
 #		      ;;
-#	              "msm8998" | "sdm660")
+#	              "msm8998" | "sdm660" | "sdm845" | "apq8098_latv")
 #		          setprop persist.sys.usb.config diag,serial_cdev,rmnet,adb
 #		      ;;
 #	              *)
 #		          setprop persist.sys.usb.config diag,adb
 #		      ;;
-#                    esac
+#                   esac
 #		    ;;
 #		  esac
 #	          ;;
@@ -176,8 +176,8 @@ echo 1  > /sys/class/android_usb/f_mass_storage/lun/nofua
 #	      ;;
 #	  esac
 #	  ;;
-#      esac
-#      ;;
+#     esac
+#    ;;
 #  * ) ;; #USB persist config exists, do nothing
 #esac
 
@@ -188,7 +188,7 @@ case "$target" in
         setprop sys.usb.rndis.func.name "rndis_bam"
 	setprop sys.usb.rmnet.func.name "rmnet_bam"
 	;;
-    "msm8998")
+    "msm8998" | "apq8098_latv")
         setprop sys.usb.controller "a800000.dwc3"
         setprop sys.usb.rndis.func.name "gsi"
 	setprop sys.usb.rmnet.func.name "gsi"
@@ -197,8 +197,9 @@ case "$target" in
         setprop sys.usb.controller "a800000.dwc3"
         setprop sys.usb.rndis.func.name "rndis_bam"
 	setprop sys.usb.rmnet.func.name "rmnet_bam"
+	echo 15916 > /sys/module/usb_f_qcrndis/parameters/rndis_dl_max_xfer_size
         ;;
-    "msmskunk")
+    "sdm845")
         setprop sys.usb.controller "a600000.dwc3"
         setprop sys.usb.rndis.func.name "gsi"
         setprop sys.usb.rmnet.func.name "gsi"
@@ -223,7 +224,25 @@ if [ -d /config/usb_gadget ]; then
 	fi
 	echo $serialno > /config/usb_gadget/g1/strings/0x409/serialnumber
 
+	persist_comp=`getprop persist.sys.usb.config`
+	comp=`getprop sys.usb.config`
+	echo $persist_comp
+	echo $comp
+	if [ "$comp" != "$persist_comp" ]; then
+		echo "setting sys.usb.config"
+		setprop sys.usb.config $persist_comp
+	fi
+
 	setprop sys.usb.configfs 1
+else
+	persist_comp=`getprop persist.sys.usb.config`
+	comp=`getprop sys.usb.config`
+	echo $persist_comp
+	echo $comp
+	if [ "$comp" != "$persist_comp" ]; then
+		echo "setting sys.usb.config"
+		setprop sys.usb.config $persist_comp
+	fi
 fi
 
 #
