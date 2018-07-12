@@ -2,7 +2,7 @@
   {
     "remote": "github",
     "repository": "shakalaca/android_kernel_asus_zs551kl",
-    "revision": "master",
+    "revision": "oreo",
     "target_path": "kernel/asus/Z01G"
   },
   {
